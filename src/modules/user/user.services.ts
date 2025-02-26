@@ -6,8 +6,13 @@ const createAdminIntoDB = async (payload: TUser) => {
     return admin;
   };
 
+  const updateUser = async (_id: string, payload: TUser) => {
+    const admin = await User.findByIdAndUpdate({ _id }, payload);
+    return admin;
+  };
+
 
   export const UserServices = {
     createAdminIntoDB,
-    
+    updateUser
   };
