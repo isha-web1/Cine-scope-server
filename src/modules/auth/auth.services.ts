@@ -1,6 +1,9 @@
+import config from "../../config";
 import { USER_Role } from "../user/user.constance";
 import { TUser } from "../user/user.interface";
 import { User } from "../user/user.model";
+import { isPasswordMatched } from "./auth.utils";
+import jwt from "jsonwebtoken";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const register = async (payload: TUser): Promise<any> => {
@@ -33,9 +36,23 @@ const register = async (payload: TUser): Promise<any> => {
       throw new Error("User is blocked");
     }
   
-    
+    const passwordMatch = await isPasswordMatched(
+        payload.password,
+        user.password
+      );
   
-   
+      if (!passwordMatch) {
+        throw new Error("Password not matched");
+      }
+
+      const jwtPayload = {
+        email: user.email,
+        role: user.role,
+      };
+      
+      const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
+        expiresIn: config.jwt_access_expires_in,
+      });
   
     
     };
